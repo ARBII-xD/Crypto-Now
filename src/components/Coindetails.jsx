@@ -5,7 +5,7 @@ import Loader from './Loader';
 import {server} from '../index.js'
 import { useParams } from 'react-router-dom';
 import ErrorComponent from './ErrorComponent';
-
+import Chart from './Chart';
 
 
 
@@ -50,7 +50,9 @@ const Coindetails = () => {
         loading ? <Loader /> :
         (
           <>
-          <Box width={"full"} borderWidth={"1"}> asdasd </Box>
+          <Box width={"full"} borderWidth={"1"}> 
+          <Chart currency={currencySymbol} />
+           </Box>
 
           
 
@@ -91,9 +93,32 @@ const Coindetails = () => {
           </Badge>
  
           <CustomBar   
-          high={`${currencySymbol}${coins.market_data.high_24h[currency]}`} 
-          low={`${currencySymbol}${coins.market_data.low_24h[currency]}`} 
+          high={`${currencySymbol} ${coins.market_data.high_24h[currency]}`} 
+          low={`${currencySymbol} ${coins.market_data.low_24h[currency]}`} 
           /> 
+
+
+          <Box  w={"full"} p="4">
+            <Item title={"Max Supply"} value={coins.market_data.max_supply} />
+            <Item title={"Circulating Supply"} value={coins.market_data.circulating_supply} />
+
+            <Item title={'market Cap'}
+            value={`${currencySymbol} ${coins.market_data.market_cap[currency]}`}
+             />
+
+<Item title={'All Time High'}
+              value={`${currencySymbol} ${coins.market_data.ath[currency]}`}
+             />
+
+
+<Item title={'All Time Low'}
+              value={`${currencySymbol} ${coins.market_data.atl[currency]}`}
+             />
+          </Box>
+
+
+
+
         </VStack>
 
           </>
@@ -105,6 +130,17 @@ const Coindetails = () => {
     </Container>
   )
 }
+
+const Item = ({title, value}) => (
+  <HStack justifyContent={"space-between"} w={"full"} my={"4"}>
+    <Text fontFamily={"cursive"} fontSize={"small"} letterSpacing={"widest"} opacity={0.8}>
+      {title}
+    </Text>
+    <Text>{value}</Text>
+    </HStack> 
+)
+
+
 
 const CustomBar = ({high, low}) => (
   <VStack w={"full"} >
