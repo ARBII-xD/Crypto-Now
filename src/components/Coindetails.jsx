@@ -1,4 +1,4 @@
-import { Badge, Box, Container, HStack, Image, Progress, Radio, RadioGroup, Stat, StatArrow, StatHelpText, StatLabel, StatNumber, Text, VStack } from '@chakra-ui/react'
+import { Badge, Box, Button, Container, HStack, Image, Progress, Radio, RadioGroup, Stat, StatArrow, StatHelpText, StatLabel, StatNumber, Text, VStack } from '@chakra-ui/react'
 import axios from 'axios';
 import React, { useEffect, useState  } from 'react'
 import Loader from './Loader';
@@ -11,23 +11,40 @@ import Chart from './Chart';
 
 
 const Coindetails = () => {
-
+  
   const [coins, setCoins] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [page, setPage] = useState(1);
   const [currency , setCurrency] = useState("pkr");
+  const [days, setDays] = useState("24H");
+  const [chrtArray, setChrtArray] = useState([]);
+
 
   const params = useParams();
   const currencySymbol= currency==="pkr"? "₨": currency === "eur" ? "€" :"$ ";
+
+  const btns = ["24H", "7D", "30D", "60D","365D", "max"]
+
+
+  const switchChartStats=(val)=>{
+    setDays(val)
+    setLoading(true)
+
+  }
 
   useEffect(() => {
 
     const fetchCoins = async () => {
       try {
         const {data} = await axios.get(`${server}/coins/${params.id}`)
-        console.log(data);
+
+        const {data:chartData} = await axios.get(`${server}/coins/${params.id}/market_chart?vs_currency=${currency}&days=${days}`)
+
+        // console.log(data);
+        // console.log(chartData);
         setCoins(data)
+        setChrtArray(chartData)
         setLoading(false)
       } catch (error) {
         setError(true)
@@ -37,7 +54,7 @@ const Coindetails = () => {
     };
     fetchCoins()
 
-  }, [params.id]);
+  }, [params.id, currency, days]);
 
 
   if (error) return <ErrorComponent message={'Error whille fetching coins'}/>
@@ -51,8 +68,20 @@ const Coindetails = () => {
         (
           <>
           <Box width={"full"} borderWidth={"1"}> 
-          <Chart currency={currencySymbol} />
+          <Chart arr={chrtArray} currency={currencySymbol} days/>
            </Box>
+
+          <HStack wrap={"wrap"} my={"4"}>
+
+            {btns.map((i) => (
+              <Button key={i} onClick={()=>switchChartStats(i)}>{i}</Button>
+            ))}
+
+
+          </HStack>
+
+
+
 
           
 
@@ -106,12 +135,12 @@ const Coindetails = () => {
             value={`${currencySymbol} ${coins.market_data.market_cap[currency]}`}
              />
 
-<Item title={'All Time High'}
+            <Item title={'All Time High'}
               value={`${currencySymbol} ${coins.market_data.ath[currency]}`}
              />
 
 
-<Item title={'All Time Low'}
+            <Item title={'All Time Low'}
               value={`${currencySymbol} ${coins.market_data.atl[currency]}`}
              />
           </Box>
