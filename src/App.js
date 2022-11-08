@@ -5,6 +5,9 @@ import Coindetails from './components/Coindetails'
 import Exchanges from './components/Exchanges'
 import Coins from './components/Coins'
 import Header from './components/Header'
+import Footer from './components/Footer'
+
+
 import {useEffect, useState} from 'react'
 import {useParams} from 'react-router-dom'
 
@@ -28,6 +31,7 @@ const App = () => {
         <Route path="/coin/:id" element={<Coindetails />} />
 
       </Routes>
+      <Footer />
     </Router>
     </>
 
